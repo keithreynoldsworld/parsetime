@@ -33450,7 +33450,9 @@ var LoginPage = React.createClass({
 				'Login Yo'
 			),
 			React.createElement('input', { type: 'text', placeholder: 'name', ref: 'loginname' }),
+			React.createElement('span', { ref: 'loginnameerror', className: 'loginnameerror' }),
 			React.createElement('input', { type: 'text', placeholder: 'password', ref: 'loginpassword' }),
+			React.createElement('span', { ref: 'loginpassworderror', className: 'loginpassworderror' }),
 			React.createElement(
 				'button',
 				{ type: 'submit' },
@@ -33460,25 +33462,39 @@ var LoginPage = React.createClass({
 	},
 	loginFunction: function loginFunction(e) {
 		e.preventDefault;
+		console.log('button pushed');
+		$('.loginnameerror').html('');
+		$('.loginpassworderror').html('');
+		if (React.findDOMNode(this.refs.loginname).value === '') {
+			$('.loginnameerror').html('you must enter a login name');
+		}
+		if (React.findDOMNode(this.refs.loginname).value === '') {
+			$('.loginnameerror').html('you must enter a login name');
+		} else {
+			var Loggie = new usermodel();
+			console.log(Loggie);
 
-		var Loggie = new usermodel();
+			Loggie.login({
+				username: React.findDOMNode(this.refs.loginname).value,
+				password: React.findDOMNode(this.refs.loginpassword).value
+			}, {
+				success: function success(userModel) {
+					app.navigate('home', { trigger: true });
+				},
 
-		Loggie.login({
-			username: React.findDOMNode(this.refs.loginname).value,
-			password: React.findDOMNode(this.refs.loginpassword).value
-		}, {
-			success: function success(userModel) {},
+				error: function error(userModel, response) {
+					console.log(userModel, response);
 
-			error: function error(userModel, response) {
-				console.log(userModel, response);
-			}
-		});
+					if (response.responseJSON.code === 101) {
+						$('.loginnameerror').html('incorrect name or password');
+					}
+				}
+			});
+		}
 	}
 });
 
 module.exports = LoginPage;
-
-//app.navigate('home', {trigger: true});
 
 },{"../main":165,"../models/UserModel":166,"backbone/node_modules/underscore":2,"backparse":3,"jquery":5,"react":160,"validator":161}],164:[function(require,module,exports){
 'use strict';
@@ -33493,6 +33509,7 @@ var $ = require('jquery');
 var usermodel = require('../models/UserModel');
 var validator = require('validator');
 var _ = require('backbone/node_modules/underscore');
+var app = require('../main');
 
 var RegisterPage = React.createClass({
 	displayName: 'RegisterPage',
@@ -33528,9 +33545,9 @@ var RegisterPage = React.createClass({
 		var C = React.findDOMNode(this.refs.registerconfirmpassword).value;
 		var E = React.findDOMNode(this.refs.registeremail).value;
 		$('.nameerror').html('');
-		$('.nameerror').html('');
-		$('.nameerror').html('');
-		$('.nameerror').html('');
+		$('.passworderror').html('');
+		$('.confirmerror').html('');
+		$('.emailerror').html('');
 		if (N === '') {
 			$('.nameerror').html('you must enter a name');
 		}
@@ -33541,7 +33558,7 @@ var RegisterPage = React.createClass({
 			$('.confirmerror').html('you must enter a password confirmation');
 		}
 		if (E === '') {
-			$('.nameerror').html('you must enter an email');
+			$('.emailerror').html('you must enter an email');
 		}
 		if (C !== P) {
 			$('.confirmerror').html('you must enter a correct password confirmation');
@@ -33557,10 +33574,18 @@ var RegisterPage = React.createClass({
 			});
 
 			Reggie.save(null, {
-				success: function success(userModel) {},
+				success: function success(userModel) {
+					app.navigate('home', { trigger: true });
+				},
 
 				error: function error(userModel, response) {
-					console.log(userModel, response);
+					console.log(response);
+					if (response.responseJSON.code === 202) {
+						$('.nameerror').html('username is taken');
+					}
+					if (response.responseJSON.code === 203) {
+						$('.emailerror').html('email is already being used');
+					}
 				}
 			});
 		}
@@ -33569,9 +33594,7 @@ var RegisterPage = React.createClass({
 
 module.exports = RegisterPage;
 
-//app.navigate('home', {trigger: true});
-
-},{"../models/UserModel":166,"backbone/node_modules/underscore":2,"backparse":3,"jquery":5,"react":160,"validator":161}],165:[function(require,module,exports){
+},{"../main":165,"../models/UserModel":166,"backbone/node_modules/underscore":2,"backparse":3,"jquery":5,"react":160,"validator":161}],165:[function(require,module,exports){
 'use strict';
 
 var React = require('react');
