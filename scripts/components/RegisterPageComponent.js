@@ -30,7 +30,7 @@ var RegisterPage = React.createClass({
 		);
 	},
 	registerFunction: function(e){
-		e.preventDefault;
+		e.preventDefault();
 		var N = React.findDOMNode(this.refs.registername).value;
 		var P = React.findDOMNode(this.refs.registerpassword).value;
 		var C = React.findDOMNode(this.refs.registerconfirmpassword).value;

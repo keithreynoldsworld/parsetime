@@ -23,7 +23,7 @@ var LoginPage = React.createClass({
 			</form>
 		);},
 	loginFunction: function(e){
-		e.preventDefault;
+		e.preventDefault();
 		console.log('button pushed');
 		$('.loginnameerror').html('');
 		$('.loginpassworderror').html('');
